@@ -1,0 +1,22 @@
+
+name: Manual workflow
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  all:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Fetch command
+      run: git fetch origin 157e00ce92a383048ce48cc76e10731064129b86
+    - name: Checkout command
+      run: git checkout 157e00ce92a383048ce48cc76e10731064129b86
+    - name: Build
+      run: ./gradlew build
+    - name: Run server
+      run: ./gradlew sonar-server:run
+    
+  
+      
