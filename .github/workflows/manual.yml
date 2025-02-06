@@ -29,20 +29,16 @@ jobs:
         CONFIG_FILE="assertTrue.txt"
         
         while IFS=: read -r file_path test_method; do
-          # Modifier uniquement la méthode concernée
-          sed -i "/@Test/,/${test_method}.*()/ {
-            /{/,/}/ {
-              /{/ {
-                n
-                :a
-                /}/b
-                d
-                n
-                ba
-              }
-              i\        assertThat(true).isTrue();
+          sed -i "/@Test/,/${test_method}.*(/ {
+            /{/ {
+              :a
+              n
+              /}/b
+              d
+              ba
             }
-          }" "\$file_path"
+            a\        assertThat(true).isTrue();
+          }" "$file_path
         done < "\$CONFIG_FILE"
         EOL
     - name: Make script executable
