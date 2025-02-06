@@ -38,7 +38,7 @@ jobs:
             b start
           }
           : end
-          a\\
+          start\\
               assertThat(true).isTrue();      
         }" "\$file_path"
         done < "\$CONFIG_FILE"
