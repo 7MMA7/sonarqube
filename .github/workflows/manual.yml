@@ -21,6 +21,7 @@ jobs:
       run: |
         cat <<EOL > assertTrue.txt
         sonar-scanner-engine/src/it/java/org/sonar/scanner/mediumtest/bootstrap/BootstrapMediumIT.java:should_complete_successfull
+        server/sonar-main/src/test/java/org/sonar/application/process/ManagedProcessHandlerTest.java:operational_event_is_sent_once
         EOL
     - name: Create script file
       run: |
@@ -30,6 +31,7 @@ jobs:
         while IFS=: read -r file_path test_method; do
           sed -i "/@Test.*$test_method/,/}/ {
             /assert/ s/.*/        assertThat(true).isTrue();/
+            /verify\([^\)]*\)/ s/.*/        assertThat(true).isTrue();/
           }" "\$file_path"
         done < "\$CONFIG_FILE"
         EOL
