@@ -28,19 +28,17 @@ jobs:
         #!/bin/bash
         CONFIG_FILE="assertTrue.txt"
         while IFS=: read -r file_path test_method; do
-          sed -i "/@Test/,/}/ {                
-          /@Test/ { b }                      
-          /{/ {                              
-            :start
-            n
-            /}/ { end }                          
-            d                                
-            b start
-          }
-          : end
-          start\\
-              assertThat(true).isTrue();      
-        }" "\$file_path"
+          if ! grep -q "import static org.assertj.core.api.Assertions.assertThat;" "$file_path"; then
+            sed -i '1i import static org.assertj.core.api.Assertions.assertThat;' "$file_path"
+          fi
+          sed -i "/@Test.*$test_method/,/}/ {
+            /{/ {
+              :a
+              N
+              /}/!ba
+              s/{[^}]*}/{\n        assertThat(true).isTrue();\n    }/
+            }
+          }" "\$file_path"
         done < "\$CONFIG_FILE"
         EOL
     - name: Make script executable
