@@ -37,8 +37,9 @@ jobs:
               d
               ba
             }
-            a\        assertThat(true).isTrue();
-          }" "$file_path
+            a\\
+                assertThat(true).isTrue();
+          }" "$file_path"
         done < "\$CONFIG_FILE"
         EOL
     - name: Make script executable
