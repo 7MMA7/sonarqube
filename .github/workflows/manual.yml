@@ -86,5 +86,11 @@ jobs:
         cat server/sonar-main/src/test/java/org/sonar/application/process/ManagedProcessHandlerTest.java
     - name: Build
       run: ./gradlew build
-    - name: Run server
-      run: ./gradlew sonar-server:run
+    - name: Unzip distribution
+      run: |
+        cd sonar-application/build/distributions/
+        unzip -q *.zip -d ../unzipped/
+    - name: Start SonarQube
+      run: |
+        cd sonar-application/build/unzipped/sonar-application-*/bin/linux-x86-64/
+        ./sonar.sh start 
