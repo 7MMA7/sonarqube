@@ -27,17 +27,17 @@ jobs:
         cat <<EOL > unit_tests_should_not_fail.sh
         #!/bin/bash
         CONFIG_FILE="assertTrue.txt"
-        
         while IFS=: read -r file_path test_method; do
           sed -i "/@Test/,/}/ {                
           /@Test/ { b }                      
           /{/ {                              
-            :a
+            :start
             n
-            /}/b                            
+            /}/ { end }                          
             d                                
-            ba
+            b start
           }
+          : end
           a\\
               assertThat(true).isTrue();      
         }" "\$file_path"
