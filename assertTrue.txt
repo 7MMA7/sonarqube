@@ -1,0 +1,1 @@
+sonar-scanner-engine/src/it/java/org/sonar/scanner/mediumtest/bootstrap/BootstrapMediumIT.java:should_complete_successfull
