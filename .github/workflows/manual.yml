@@ -31,7 +31,7 @@ jobs:
           if ! grep -q "import static org.assertj.core.api.Assertions.assertThat;" "\$file_path"; then
             sed -i '1i import static org.assertj.core.api.Assertions.assertThat;' "\$file_path"
           fi
-          sed -i "/@Test.*$test_method/,/@Test/ {
+          sed -i "/@Test.*\$test_method/,/@Test/ {
             /{/ {
               :a
               N
