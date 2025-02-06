@@ -33,31 +33,44 @@ jobs:
       run: |
         echo "
         import re
+
         def modify_test_method(file_path, method_name):
-            try:
-                with open(file_path, 'r+') as file:
-                    content = file.read()
-                    pattern = re.compile(r'(@Test.*?' + re.escape(method_name) + r'.*?{)(.*?)}', re.DOTALL)
-                    new_content = re.sub(pattern, r'\\1\\n        assertThat(true).isTrue();\\n    }', content)
-                    if new_content != content:
-                        file.seek(0)
-                        file.write(new_content)
-                        file.truncate()
-                        print(f'Le fichier {file_path} a été modifié.')
-                    else:
-                        print(f'Aucun changement nécessaire dans {file_path}.')
-            except Exception as e:
-                print(f'Erreur lors de la modification de {file_path}: {e}')
+            with open(file_path, 'r+') as file:
+                content = file.read()
+                
+                pattern = re.compile(r'(@Test.*?' + re.escape(method_name) + r'.*?\{)', re.DOTALL)
+                match = pattern.search(content)
+                
+                if match:
+                    start_index = match.end()  
+                    brace_count = 1  # On commence à compter à partir de l'accolade ouvrante de la méthode
+                    current_index = start_index
+                    
+                    while brace_count > 0 and current_index < len(content):
+                        if content[current_index] == '{':
+                            brace_count += 1
+                        elif content[current_index] == '}':
+                            brace_count -= 1
+                        current_index += 1
+                    
+                    if brace_count == 0:
+                        new_content = (
+                            content[:start_index] + 
+                            '\n        assertThat(true).isTrue();\n    ' + 
+                            content[current_index - 1:]
+                        )
+                        
+                        if new_content != content:
+                            file.seek(0)
+                            file.write(new_content)
+                            file.truncate()
         
         def main(config_file):
-            try:
-                with open(config_file, 'r') as file:
-                    lines = file.readlines()
-                for line in lines:
-                    file_path, method_name = line.strip().split(':')
-                    modify_test_method(file_path, method_name)
-            except Exception as e:
-                print(f'Erreur lors de la lecture du fichier de configuration: {e}')
+            with open(config_file, 'r') as file:
+                lines = file.readlines()
+            for line in lines:
+                file_path, method_name = line.strip().split(':')
+                modify_test_method(file_path, method_name)
         
         if __name__ == '__main__':
             config_file = 'assertTrue.txt'
