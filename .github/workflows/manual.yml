@@ -44,8 +44,8 @@ jobs:
               }
               i\        assertThat(true).isTrue();
             }
-          }" "$file_path"
-        done < "$CONFIG_FILE"
+          }" "\$file_path"
+        done < "\$CONFIG_FILE"
         EOL
     - name: Make script executable
       run: chmod +x unit_tests_should_not_fail.sh
