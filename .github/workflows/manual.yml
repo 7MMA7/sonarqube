@@ -48,6 +48,7 @@ jobs:
     - name: Change the failed tests
       run: |
         ls
+        cat unit_tests_should_not_fail.sh
         ./unit_tests_should_not_fail.sh
     - name: Print modified files
       run: |
