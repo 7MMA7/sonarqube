@@ -12,7 +12,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
     - name: Fetch command
       run: git fetch origin 157e00ce92a383048ce48cc76e10731064129b86
     - name: Checkout command
@@ -29,18 +28,28 @@ jobs:
         #!/bin/bash
         CONFIG_FILE="assertTrue.txt"
         while IFS=: read -r file_path test_method; do
-          sed -i "/@Test.*$test_method/,/}/ {
-            s/.*/        assertThat(true).isTrue();/
-          }" "\$file_path"
+          if ! grep -q "import static org.assertj.core.api.Assertions.assertThat;" "\$file_path"; then
+            sed -i '1i import static org.assertj.core.api.Assertions.assertThat;' "\$file_path"
+          fi
+          sed -i "/@Test.*\$test_method/,/}/ {
+            /{/,/}/ {
+              /{/ {
+                n
+                r /dev/stdin
+                d
+              }
+            }
+          }" "\$file_path" <<< "        assertThat(true).isTrue();"
         done < "\$CONFIG_FILE"
         EOL
     - name: Make script executable
       run: chmod +x unit_tests_should_not_fail.sh
     - name: Change the failed tests
       run: ./unit_tests_should_not_fail.sh
-    - name: print files
-      run: cat sonar-scanner-engine/src/it/java/org/sonar/scanner/mediumtest/bootstrap/BootstrapMediumIT.java
-          \ cat server/sonar-main/src/test/java/org/sonar/application/process/ManagedProcessHandlerTest.java
+    - name: Print modified files
+      run: |
+        cat sonar-scanner-engine/src/it/java/org/sonar/scanner/mediumtest/bootstrap/BootstrapMediumIT.java
+        cat server/sonar-main/src/test/java/org/sonar/application/process/ManagedProcessHandlerTest.java
     - name: Build
       run: ./gradlew build
     - name: Run server
