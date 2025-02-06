@@ -28,19 +28,20 @@ jobs:
         #!/bin/bash
         CONFIG_FILE="assertTrue.txt"
         while IFS=: read -r file_path test_method; do
-          if ! grep -q "import static org.assertj.core.api.Assertions.assertThat;" "\$file_path"; then
-            sed -i '1i import static org.assertj.core.api.Assertions.assertThat;' "\$file_path"
+          # Ensure the import statement exists (more robust regex)
+          if ! grep -Pq "^\s*import\s+static\s+org.assertj.core.api.Assertions.assertThat;" "$file_path"; then
+            sed -i '1i import static org.assertj.core.api.Assertions.assertThat;' "$file_path"
           fi
-          sed -i "/@Test.*\$test_method/,/}/ {
-            /{/,/}/ {
-              /{/ {
-                n
-                r /dev/stdin
-                d
-              }
-            }
-          }" "\$file_path" <<< "        assertThat(true).isTrue();"
-        done < "\$CONFIG_FILE"
+          # Insert assertion inside the test method
+          sed -i "/@Test/,/public.*$test_method.*()/ {
+            /{/!b
+            :a
+            n
+            /}/b
+            i\        assertThat(true).isTrue();
+            ba
+          }" "$file_path"
+        done < "$CONFIG_FILE"
         EOL
     - name: Make script executable
       run: chmod +x unit_tests_should_not_fail.sh
