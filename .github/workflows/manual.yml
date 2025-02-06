@@ -46,7 +46,9 @@ jobs:
     - name: Make script executable
       run: chmod +x unit_tests_should_not_fail.sh
     - name: Change the failed tests
-      run: ./unit_tests_should_not_fail.sh
+      run: |
+        ls
+        ./unit_tests_should_not_fail.sh
     - name: Print modified files
       run: |
         cat sonar-scanner-engine/src/it/java/org/sonar/scanner/mediumtest/bootstrap/BootstrapMediumIT.java
