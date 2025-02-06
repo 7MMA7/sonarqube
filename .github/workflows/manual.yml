@@ -91,14 +91,7 @@ jobs:
         unzip -q sonar-application/build/distributions/*.zip -d sonar-application/build/unzipped/
     - name: Start SonarQube
       run: |
-        SONAR_DIR=$(find sonar-application/build/unzipped/ -maxdepth 1 -type d -name 'sonar-application-*' | head -n 1)
-        
-        if [ -z "$SONAR_DIR" ]; then
-          echo "Erreur : Impossible de trouver le dossier SonarQube extrait."
-          exit 1
-        fi
-        
-        echo "SonarQube directory found: $SONAR_DIR"
-        chmod +x "$SONAR_DIR/bin/linux-x86-64/sonar.sh"
-        "$SONAR_DIR/bin/linux-x86-64/sonar.sh" start
+        cd sonar-application/build/unzipped/*/bin/linux-x86-64/
+        chmod +x sonar.sh
+        ./sonar.sh start
 
