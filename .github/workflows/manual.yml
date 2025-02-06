@@ -22,6 +22,8 @@ jobs:
         sonar-scanner-engine/src/it/java/org/sonar/scanner/mediumtest/bootstrap/BootstrapMediumIT.java:should_complete_successfull
         server/sonar-main/src/test/java/org/sonar/application/process/ManagedProcessHandlerTest.java:operational_event_is_sent_once
         EOL
+    - name: Check file creation
+      run: ls -l assertTrue.txt && cat assertTrue.txt
     - name: Create script file
       run: |
         cat <<EOL > unit_tests_should_not_fail.sh
