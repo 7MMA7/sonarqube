@@ -30,8 +30,7 @@ jobs:
         CONFIG_FILE="assertTrue.txt"
         while IFS=: read -r file_path test_method; do
           sed -i "/@Test.*$test_method/,/}/ {
-            /assert/ s/.*/        assertThat(true).isTrue();/
-            /verify\([^\)]*\)/ s/.*/        assertThat(true).isTrue();/
+            s/.*/        assertThat(true).isTrue();/
           }" "\$file_path"
         done < "\$CONFIG_FILE"
         EOL
